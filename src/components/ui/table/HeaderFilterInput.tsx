@@ -1,25 +1,35 @@
-     export type FilterPayloadRange = {
+export type FilterPayloadSelect = {
+    type: 'select';
+    values: string[];
+    options: string[];
+};
+
+export type FilterPayloadRange = {
     type: 'range';
     max?: number | null;
     min?: number | null;
 };
+
 export type FilterPayloadString = {
     type: 'string';
     value: string | null;
 };
+
 export type Filters = Record<
     string,
-    FilterPayloadRange | FilterPayloadString
+    FilterPayloadRange | FilterPayloadString | FilterPayloadSelect
 >;
 
 export default function HeaderFilterInput({
-                                              field,
-                                              filterType,
-                                              filters,
-                                              onFilterChange,
-                                          }: Readonly<{
+    field,
+    filterType,
+    filterOptions,
+    filters,
+    onFilterChange,
+}: Readonly<{
     field: string;
-    filterType: 'range' | 'string';
+    filterType: 'range' | 'string' | 'select';
+    filterOptions?: string[];
     filters: Filters;
     onFilterChange: (newFilters: Filters) => void;
 }>) {
@@ -27,6 +37,58 @@ export default function HeaderFilterInput({
         <div className="filter-input">
             {(() => {
                 switch (filterType) {
+                    case 'select': {
+                        const filterData = filters[field] as FilterPayloadSelect | null;
+
+                        return (
+                            <>
+                                {filterOptions?.map(option => (
+                                    <div>
+                                        <input
+                                            type="checkbox"
+                                            name={field}
+                                            id={`${field}-${option}`}
+                                            value={option}
+                                            checked={filterData?.values?.includes(option)}
+                                            onChange={(event) => {
+                                                const value = event.target.value;
+                                                let newFilters: Filters;
+                                                if(event.target.checked) {
+                                                    const newValues = [...filterData?.values || [], value];
+                                                    newFilters = {
+                                                        ...filters,
+                                                        [field]: {
+                                                            type: 'select',
+                                                            values: newValues,
+                                                            options: filterOptions || [],
+                                                        },
+                                                    };
+                                                }
+                                                else {
+                                                    const newValues = filterData?.values?.filter(val => val !== value);
+                                                    newFilters = {
+                                                        ...filters,
+                                                        [field]: {
+                                                            type: 'select',
+                                                            values: newValues || [],
+                                                            options: filterOptions || [],
+                                                        },
+                                                    };
+                                                }
+                                                onFilterChange(newFilters);
+                                            }}
+                                        />
+                                        <label
+                                            key={option}
+                                            htmlFor={`${field}-${option}`}
+                                        >
+                                            {option}
+                                        </label>
+                                    </div>
+                                ))}
+                            </>
+                        );
+                    }
                     case 'string': {
                         const filterData = filters[
                             field

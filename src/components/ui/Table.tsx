@@ -7,12 +7,9 @@ type ColumnDef<T> = Readonly<{
     label: string;
     key: string;
     renderCell: (row: T) => React.ReactNode;
-    comparator: (
-        a: T,
-        b: T,
-        sortDirection: SortDirection,
-    ) => number;
-    filterType: 'string' | 'range' | null;
+    comparator: (a: T, b: T, sortDirection: SortDirection) => number;
+    filterType: 'string' | 'range' | 'select' | null;
+    filterOptions?: string[];
 }>;
 export type Columns<T> = ReadonlyArray<ColumnDef<T>>;
 
@@ -20,10 +17,15 @@ function filterData<T>(data: Array<T>, filters: Filters) {
     return data.filter((row) =>
         Object.entries(filters)
             .map(([key, filterPayload]) => {
-                // Note: Admittedly this is not-typesafe.
                 const value = (row as any)[key];
 
                 switch (filterPayload.type) {
+                    case 'select': {
+                        if (filterPayload.values.length === 0) {
+                            return true;
+                        }
+                        return filterPayload.values.includes(value);
+                    }
                     case 'string': {
                         if (
                             filterPayload.value == null ||
@@ -135,7 +137,7 @@ function Table<
             <table>
                 <thead>
                 <tr>
-                    {columns.map(({ label, key, filterType }) => (
+                    {columns.map(({ label, key, filterType, filterOptions }) => (
                         <th key={key}>
                             <button
                                 onClick={() => {
@@ -159,6 +161,7 @@ function Table<
                                     field={key}
                                     filterType={filterType}
                                     filters={filters}
+                                    filterOptions={filterOptions}
                                     onFilterChange={(newFilters) => {
                                         setFilters(newFilters);
                                         setPage(1);

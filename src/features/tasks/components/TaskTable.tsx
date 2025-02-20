@@ -1,68 +1,68 @@
 import Table, {Columns, SortDirection} from "../../../components/ui/Table.tsx";
-import users from "../data/users.json";
+import tasks from "../data/tasks.json";
 
-type User = (typeof users)[number];
-const userColumns: Columns<User> = [
+type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
+type Status = 'completed' | 'in_progress' | 'not_started';
+
+type Task = {
+    id: number;
+    title: string;
+    priority: Priority;
+    status: Status;
+};
+
+const PRIORITY_OPTIONS = ['urgent', 'high', 'medium', 'low', 'none'];
+const STATUS_OPTIONS = ['completed', 'in_progress', 'not_started'];
+
+const taskColumns: Columns<Task> = [
     {
         label: 'ID',
         key: 'id',
-        renderCell: (user: User) => user.id,
-        comparator: (
-            a: User,
-            b: User,
-            direction: SortDirection,
-        ) => (direction === 'asc' ? a.id - b.id : b.id - a.id),
+        renderCell: (task: Task) => task.id,
+        comparator: (a: Task, b: Task, direction: SortDirection) =>
+            direction === 'asc' ? a.id - b.id : b.id - a.id,
         filterType: null,
     },
     {
-        label: 'Name',
-        key: 'name',
-        renderCell: (user: User) => user.name,
-        comparator: (
-            a: User,
-            b: User,
-            direction: SortDirection,
-        ) =>
+        label: 'Title',
+        key: 'title',
+        renderCell: (task: Task) => task.title,
+        comparator: (a: Task, b: Task, direction: SortDirection) =>
             direction === 'asc'
-                ? a.name.localeCompare(b.name)
-                : b.name.localeCompare(a.name),
+                ? a.title.localeCompare(b.title)
+                : b.title.localeCompare(a.title),
         filterType: 'string',
     },
     {
-        label: 'Age',
-        key: 'age',
-        renderCell: (user: User) => user.age,
-        comparator: (
-            a: User,
-            b: User,
-            direction: SortDirection,
-        ) =>
-            direction === 'asc' ? a.age - b.age : b.age - a.age,
-        filterType: 'range',
+        label: 'Priority',
+        key: 'priority',
+        renderCell: (task: Task) => task.priority,
+        comparator: (a: Task, b: Task, direction: SortDirection) =>
+            direction === 'asc'
+                ? a.priority.localeCompare(b.priority)
+                : b.priority.localeCompare(a.priority),
+        filterType: 'select',
+        filterOptions: PRIORITY_OPTIONS,
     },
     {
-        label: 'Occupation',
-        key: 'occupation',
-        renderCell: (user: User) => user.occupation,
-        comparator: (
-            a: User,
-            b: User,
-            direction: SortDirection,
-        ) =>
+        label: 'Status',
+        key: 'status',
+        renderCell: (task: Task) => task.status,
+        comparator: (a: Task, b: Task, direction: SortDirection) =>
             direction === 'asc'
-                ? a.occupation.localeCompare(b.occupation)
-                : b.occupation.localeCompare(a.occupation),
-        filterType: 'string',
+                ? a.status.localeCompare(b.status)
+                : b.status.localeCompare(a.status),
+        filterType: 'select',
+        filterOptions: STATUS_OPTIONS,
     },
 ];
-
 
 function TaskTable() {
     return (
         <>
-            <Table data={users} columns={userColumns}/>
+            <Table data={tasks} columns={taskColumns}/>
         </>
-    )
+    );
 }
 
 export default TaskTable;
