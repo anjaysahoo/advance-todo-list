@@ -42,8 +42,8 @@ export default function HeaderFilterInput({
 
                         return (
                             <>
-                                {filterOptions?.map(option => (
-                                    <div>
+                                {filterOptions?.map((option) => (
+                                    <div key={option}>
                                         <input
                                             type="checkbox"
                                             name={field}
