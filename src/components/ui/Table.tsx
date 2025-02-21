@@ -7,7 +7,7 @@ type ColumnDef<T> = Readonly<{
     label: string;
     key: string;
     renderCell: (row: T) => React.ReactNode;
-    comparator: (a: T, b: T, sortDirection: SortDirection) => number;
+    comparator: (a: T, b: T, sortDirection: SortDirection) => number | null;
     filterType: 'string' | 'range' | 'select' | null;
     filterOptions?: string[];
 }>;
