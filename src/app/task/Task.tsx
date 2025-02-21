@@ -1,12 +1,18 @@
 import TaskTable from "../../features/tasks/components/TaskTable.tsx";
-import TaskForm from "../../features/tasks/components/TaskForm.tsx";
+import CreateTask from "../../features/tasks/components/CreateTask.tsx";
+import {useState} from "react";
 
 function Task() {
+    const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
+
     return (
         <main>
             <h1>Task Management</h1>
+            <nav>
+                <button onClick={() => setIsCreateTaskOpen(true)}>Create Task</button>
+            </nav>
             <TaskTable/>
-            <TaskForm/>
+            <CreateTask isOpen={isCreateTaskOpen} onClose={() => setIsCreateTaskOpen(false)}/>
         </main>
     )
 }

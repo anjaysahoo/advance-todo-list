@@ -1,7 +1,11 @@
+import Modal from "../../../components/ui/Modal";
 import DynamicForm, {FieldConfig} from "../../../components/ui/DynamicForm.tsx";
 import { z } from "zod";
+function CreateTask({isOpen, onClose}:  Readonly<{
+    isOpen: boolean;
+    onClose: () => void;
+}>)  {
 
-function TaskForm() {
     const formConfig: FieldConfig[] = [
         {
             key: "name",
@@ -32,11 +36,17 @@ function TaskForm() {
         console.log("Form submitted with data:", data);
     };
 
+
     return (
         <>
-            <DynamicForm config={formConfig} defaultValues={{ name: "John" }} onSubmit={handleFormSubmit} />
+            <Modal
+                open={isOpen}
+                title="Create Task"
+                onClose={onClose}>
+                <DynamicForm config={formConfig} defaultValues={{ name: "John" }} onSubmit={handleFormSubmit} />
+            </Modal>
         </>
     )
 }
 
-export default TaskForm;
+export default CreateTask;
