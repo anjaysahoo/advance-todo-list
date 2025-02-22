@@ -21,6 +21,11 @@ function ManageCustomFields({isOpen, onClose}:  Readonly<{
             label: data.label,
             type: data.type,
             placeholder: `Enter ${data.label}`,
+            options: data.type === 'checkbox' ? [
+                { value: 'clear', label: "Clear" },
+                { value: 'checked', label: "Checked" },
+                { value: 'unchecked', label: "Unchecked" },
+            ] : [],
         };
 
         dispatch(addCustomField(newField));
@@ -29,6 +34,8 @@ function ManageCustomFields({isOpen, onClose}:  Readonly<{
             type: newField.type
         }));
     };
+
+
 
     return (
         <div>

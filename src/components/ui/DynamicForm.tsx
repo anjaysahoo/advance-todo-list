@@ -7,7 +7,7 @@ import { z } from "zod";
 export interface FieldConfig {
     key: string;
     label: string;
-    type: "text" | "select" | "checkbox";
+    type: "text" | "select" | "checkbox" | "number";
     options?: { value: string; label: string }[]; // Options for select fields
     placeholder?: string;
     validation?: z.ZodType<any>; // Validation schema using Zod
@@ -20,11 +20,24 @@ interface DynamicFormProps {
     onSubmit: (values: Record<string, any>) => void; // Submission handler
 }
 
+const getValidationByType = (type: string): z.ZodType => {
+    switch (type) {
+        case 'number':
+            return z.coerce.number().min(-999999).max(999999);
+        case 'text':
+            return z.string().min(1, "Field cannot be empty");
+        case 'checkbox':
+            return z.boolean();
+        default:
+            return z.string();
+    }
+};
+
 const DynamicForm: React.FC<DynamicFormProps> = ({ config, defaultValues = {}, onSubmit }) => {
     // Construct a validation schema dynamically based on the provided config
     const schema = z.object(
         Object.fromEntries(
-            config.map((field) => [field.key, field.validation || z.string()])
+            config.map((field) => [field.key, field.validation || getValidationByType(field.type)])
         )
     );
 
@@ -64,6 +77,9 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ config, defaultValues = {}, o
                     {/* Render checkbox if type is 'checkbox' */}
                     {field.type === "checkbox" && (
                         <input type="checkbox" {...register(field.key)} />
+                    )}
+                    {field.type === "number" && (
+                        <input type="number" {...register(field.key)} />
                     )}
                     {/* Display error message if validation fails */}
                     {errors[field.key] && <p>{errors[field.key].message}</p>}

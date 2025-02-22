@@ -1,8 +1,18 @@
 import {Columns, SortDirection} from "../../../components/ui/Table.tsx";
 import {Task} from "../slices/task.slice.ts";
 
-const PRIORITY_OPTIONS = ['urgent', 'high', 'medium', 'low', 'none'];
-const STATUS_OPTIONS = ['completed', 'in_progress', 'not_started'];
+export const STATUS_OPTIONS  = [
+    { value: "completed", label: "Completed" },
+    { value: "in_progress", label: "In Progress" },
+    { value: "not_started", label: "Not Started" },
+];
+export const PRIORITY_OPTIONS = [
+    { value: "urgent", label: "Urgent" },
+    { value: "high", label: "High" },
+    { value: "medium", label: "Medium" },
+    { value: "low", label: "Low" },
+    { value: "none", label: "None" },
+];
 
 const mustTaskColumnConfig: Columns<Task> = [
     {

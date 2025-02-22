@@ -1,5 +1,6 @@
 import {FieldConfig} from "../../../components/ui/DynamicForm.tsx";
 import {z} from "zod";
+import {PRIORITY_OPTIONS, STATUS_OPTIONS} from "./must-task-column.config.ts";
 
 const mustFieldsConfig: FieldConfig[] = [
     {
@@ -15,9 +16,7 @@ const mustFieldsConfig: FieldConfig[] = [
         type: "select",
         options: [
             { value: "", label: "Select Status" },
-            { value: "completed", label: "Completed" },
-            { value: "in_progress", label: "In Progress" },
-            { value: "not_started", label: "Not Started" },
+            ...STATUS_OPTIONS
         ],
         validation: z.string().min(1, "Status is required"), // Ensure a value is selected
     },
@@ -27,10 +26,7 @@ const mustFieldsConfig: FieldConfig[] = [
         type: "select",
         options: [
             { value: "", label: "Select Priority" },
-            { value: "urgent", label: "Urgent" },
-            { value: "high", label: "High" },
-            { value: "low", label: "Low" },
-            { value: "none", label: "None" },
+            ...PRIORITY_OPTIONS
         ],
         validation: z.string().min(1, "Priority is required"), // Ensure a value is selected
     },

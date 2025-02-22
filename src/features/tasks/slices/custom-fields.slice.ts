@@ -5,6 +5,7 @@ export type CustomFieldConfig = {
     label: string;
     type: "text" | "select" | "checkbox" | "number";
     placeholder?: string;
+    options?: { value: string; label: string }[];
 };
 
 interface CustomFieldsState {
@@ -15,11 +16,14 @@ const initialState: CustomFieldsState = {
     fields: []
 };
 
+
+
 const customFieldsSlice = createSlice({
     name: 'customFields',
     initialState,
     reducers: {
         addCustomField: (state, action: PayloadAction<CustomFieldConfig>) => {
+            console.log("Adding custom field:", action.payload);
             state.fields.push(action.payload);
         },
         deleteCustomField: (state, action: PayloadAction<string>) => {

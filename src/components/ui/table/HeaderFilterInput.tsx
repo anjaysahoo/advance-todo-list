@@ -1,7 +1,7 @@
 export type FilterPayloadSelect = {
     type: 'select';
     values: string[];
-    options: string[];
+    options: {value: string, label: string}[];
 };
 
 export type FilterPayloadRange = {
@@ -15,9 +15,14 @@ export type FilterPayloadString = {
     value: string | null;
 };
 
+export type FilterPayloadRadio = {
+    type: 'radio';
+    value: string | null;
+};
+
 export type Filters = Record<
     string,
-    FilterPayloadRange | FilterPayloadString | FilterPayloadSelect
+    FilterPayloadRange | FilterPayloadString | FilterPayloadSelect | FilterPayloadRadio
 >;
 
 export default function HeaderFilterInput({
@@ -28,8 +33,8 @@ export default function HeaderFilterInput({
     onFilterChange,
 }: Readonly<{
     field: string;
-    filterType: 'range' | 'string' | 'select';
-    filterOptions?: string[];
+    filterType: 'range' | 'string' | 'select' | 'radio' | null;
+    filterOptions?: {value: string, label: string}[];
     filters: Filters;
     onFilterChange: (newFilters: Filters) => void;
 }>) {
@@ -43,13 +48,13 @@ export default function HeaderFilterInput({
                         return (
                             <>
                                 {filterOptions?.map((option) => (
-                                    <div key={option}>
+                                    <div key={option.value}>
                                         <input
                                             type="checkbox"
                                             name={field}
-                                            id={`${field}-${option}`}
-                                            value={option}
-                                            checked={filterData?.values?.includes(option)}
+                                            id={`${field}-${option.value}`}
+                                            value={option.value}
+                                            checked={filterData?.values?.includes(option.value)}
                                             onChange={(event) => {
                                                 const value = event.target.value;
                                                 let newFilters: Filters;
@@ -79,10 +84,46 @@ export default function HeaderFilterInput({
                                             }}
                                         />
                                         <label
-                                            key={option}
-                                            htmlFor={`${field}-${option}`}
+                                            key={option.value}
+                                            htmlFor={`${field}-${option.value}`}
                                         >
-                                            {option}
+                                            {option.label}
+                                        </label>
+                                    </div>
+                                ))}
+                            </>
+                        );
+                    }
+                    case 'radio': {
+                        const filterData = filters[field] as FilterPayloadRadio | null;
+
+                        return (
+                            <>
+                                {filterOptions?.map((option) => (
+                                    <div key={option.value}>
+                                        <input
+                                            type="radio"
+                                            name={field}
+                                            id={`${field}-${option.value}`}
+                                            value={option.value}
+                                            checked={filterData?.value === option.value}
+                                            onChange={(event) => {
+                                                const newFilters: Filters = {
+                                                    ...filters,
+                                                    [field]: {
+                                                        type: 'radio',
+                                                        value: event.target.value,
+                                                    },
+                                                };
+
+                                                onFilterChange(newFilters);
+                                            }}
+                                        />
+                                        <label
+                                            key={option.value}
+                                            htmlFor={`${field}-${option.value}`}
+                                        >
+                                            {option.label}
                                         </label>
                                     </div>
                                 ))}

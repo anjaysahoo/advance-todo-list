@@ -8,8 +8,8 @@ type ColumnDef<T> = Readonly<{
     key: string;
     renderCell: (row: T) => React.ReactNode;
     comparator: (a: T, b: T, sortDirection: SortDirection) => number | null;
-    filterType: 'string' | 'range' | 'select' | null;
-    filterOptions?: string[];
+    filterType: 'string' | 'range' | 'select' | 'radio' | null;
+    filterOptions?: {value: string, label: string}[];
 }>;
 export type Columns<T> = ReadonlyArray<ColumnDef<T>>;
 
@@ -25,6 +25,13 @@ function filterData<T>(data: Array<T>, filters: Filters) {
                             return true;
                         }
                         return filterPayload.values.includes(value);
+                    }
+                    case 'radio': {
+                        if (filterPayload.value === 'clear') {
+                            return true;
+                        }
+
+                        return (filterPayload.value === 'checked' && value === true) || (filterPayload.value === 'unchecked' && value === false);
                     }
                     case 'string': {
                         if (

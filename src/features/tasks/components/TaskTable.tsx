@@ -18,14 +18,14 @@ type Task = {
 };
 
 // Helper functions moved to the top
-const getFilterType = (type: string): 'string' | 'range' | 'select' | null => {
+const getFilterType = (type: string): 'string' | 'range' | 'select' | 'radio' | null => {
     switch (type) {
         case 'number':
             return 'range';
         case 'text':
             return 'string';
         case 'checkbox':
-            return 'select';
+            return 'radio';
         default:
             return null;
     }
@@ -44,7 +44,9 @@ const getDefaultValue = (type: string) => {
     }
 };
 
+
 function TaskTable() {
+    const checkboxOrder = { true: 1, false: 2, null: 3 };
     const dispatch = useDispatch();
     const tasks = useSelector((state: RootState) => state.tasks.tasks);
     const customFields = useSelector((state: RootState) => state.customFields.fields);
@@ -55,15 +57,43 @@ function TaskTable() {
     const customTaskColumns: Columns<Task> = customFields.map(field => ({
         label: field.label,
         key: field.key,
-        renderCell: (task: Task) => task[field.key] ?? getDefaultValue(field.type),
+        renderCell: (task: Task) => {
+            if (field.type === 'checkbox') {
+                return (
+                    <input
+                        type="checkbox"
+                        checked={task[field.key] ?? false}
+                        readOnly
+                    />
+                );
+            }
+            return task[field.key] ?? getDefaultValue(field.type);
+        },
         comparator: (a: Task, b: Task, direction: SortDirection) => {
             const aVal = a[field.key] ?? getDefaultValue(field.type);
             const bVal = b[field.key] ?? getDefaultValue(field.type);
-            return direction === 'asc' ? 
-                String(aVal).localeCompare(String(bVal)) :
-                String(bVal).localeCompare(String(aVal));
+
+            switch (field.type) {
+                case 'number':
+                    return direction === 'asc' ?
+                        Number(aVal) - Number(bVal) :
+                        Number(bVal) - Number(aVal);
+                case 'checkbox':
+                    return direction === 'asc' ?
+                        checkboxOrder[aVal] - checkboxOrder[bVal] :
+                        checkboxOrder[bVal] - checkboxOrder[aVal];
+                default:
+                    return direction === 'asc' ?
+                        String(aVal).localeCompare(String(bVal)) :
+                        String(bVal).localeCompare(String(aVal));
+            }
         },
         filterType: getFilterType(field.type),
+        filterOptions: field.type === 'checkbox' ? [
+            { value: 'clear', label: "Clear" },
+            { value: 'checked', label: "Checked" },
+            { value: 'unchecked', label: "Unchecked" },
+        ] : field.options
     }));
 
     const editDeleteTaskColumns: Columns<Task> = [
