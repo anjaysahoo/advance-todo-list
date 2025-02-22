@@ -1,8 +1,9 @@
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { addTask, updateTask } from '../slices/task.slice.ts';
 import Modal from "../../../components/ui/Modal.tsx";
-import DynamicForm, {FieldConfig} from "../../../components/ui/DynamicForm.tsx";
+import DynamicForm from "../../../components/ui/DynamicForm.tsx";
 import mustFieldsConfig from "../config/must-fields.config.ts";
+import {RootState} from "@reduxjs/toolkit/query";
 
 function ManageTask({isOpen, onClose, isEdit, defaultValues, title=""}:  Readonly<{
     isOpen: boolean;
@@ -12,8 +13,7 @@ function ManageTask({isOpen, onClose, isEdit, defaultValues, title=""}:  Readonl
     title?: string
 }>)   {
     const dispatch = useDispatch();
-
-    const customFieldsConfig: FieldConfig[] = [];
+    const customFieldsConfig = useSelector((state: RootState) => state.customFields.fields);
 
 
     const handleFormSubmit = (data) => {

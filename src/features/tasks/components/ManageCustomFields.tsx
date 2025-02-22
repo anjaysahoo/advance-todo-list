@@ -1,25 +1,33 @@
 import Modal from "../../../components/ui/Modal.tsx";
-import DynamicForm, {FieldConfig} from "../../../components/ui/DynamicForm.tsx";
+import DynamicForm from "../../../components/ui/DynamicForm.tsx";
 import camelize from "../utils/helper/camelize.helper.ts";
 import customFieldsFormConfig from "../config/custom-fields-form.config.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../../store/store.ts";
+import {addCustomField, deleteCustomField} from "../slices/custom-fields.slice.ts";
+import {addCustomFieldToTasks} from "../slices/task.slice.ts";
 
 function ManageCustomFields({isOpen, onClose}:  Readonly<{
     isOpen: boolean;
     onClose: () => void;
 }>)    {
 
-    const customFieldsConfig: FieldConfig[] = [];
+    const dispatch = useDispatch();
+    const customFieldsConfig = useSelector((state: RootState) => state.customFields.fields);
 
     const handleFormSubmit = (data: Record<string, any>) => {
-            console.log("Form submitted with data:", data);
+        const newField = {
+            key: camelize(data.label),
+            label: data.label,
+            type: data.type,
+            placeholder: `Enter ${data.label}`,
+        };
 
-            const newField = {
-                key: camelize(data.label),
-                label: data.label,
-                type: data.type
-            }
-
-        console.log("New Field:", newField);
+        dispatch(addCustomField(newField));
+        dispatch(addCustomFieldToTasks({
+            key: newField.key,
+            type: newField.type
+        }));
     };
 
     return (
@@ -36,7 +44,9 @@ function ManageCustomFields({isOpen, onClose}:  Readonly<{
                     {customFieldsConfig.map((field) => (
                         <li key={field.key}>
                             <p>{field.label}</p>
-                            <button>Delete</button>
+                            <button onClick={() => dispatch(deleteCustomField(field.key))}>
+                                Delete
+                            </button>
                         </li>
                     ))}
                 </ul>
