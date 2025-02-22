@@ -1,3 +1,5 @@
+import { useDispatch } from 'react-redux';
+import { addTask, updateTask } from '../slices/task.slice.ts';
 import Modal from "../../../components/ui/Modal.tsx";
 import DynamicForm, {FieldConfig} from "../../../components/ui/DynamicForm.tsx";
 import { z } from "zod";
@@ -9,6 +11,7 @@ function ManageTask({isOpen, onClose, isEdit, defaultValues, title=""}:  Readonl
     defaultValues?: Record<string, any>;
     title?: string
 }>)   {
+    const dispatch = useDispatch();
 
     const formConfig: FieldConfig[] = [
         {
@@ -45,11 +48,13 @@ function ManageTask({isOpen, onClose, isEdit, defaultValues, title=""}:  Readonl
         },
     ];
 
-    const handleFormSubmit = (data: Record<string, any>) => {
-        if(isEdit)
-            console.log("Edit form submitted with data:", data);
-        else
-            console.log("Create form submitted with data:", data);
+    const handleFormSubmit = (data) => {
+        if(isEdit && defaultValues?.id) {
+            dispatch(updateTask({ ...data, id: defaultValues.id }));
+        } else {
+            dispatch(addTask(data));
+        }
+        onClose();
     };
 
     return (

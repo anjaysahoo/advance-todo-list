@@ -1,7 +1,9 @@
 import Table, {Columns, SortDirection} from "../../../components/ui/Table.tsx";
-import tasks from "../data/tasks.json";
 import {useState} from "react";
 import ManageTask from "./ManageTask.tsx";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "@reduxjs/toolkit/query";
+import {deleteTask} from "../slices/task.slice.ts";
 
 type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
 type Status = 'completed' | 'in_progress' | 'not_started';
@@ -19,6 +21,8 @@ const STATUS_OPTIONS = ['completed', 'in_progress', 'not_started'];
 
 
 function TaskTable() {
+    const dispatch = useDispatch();
+    const tasks = useSelector((state: RootState) => state.tasks.tasks);
     const [isManageTaskOpen, setIsManageTaskOpen] = useState(false);
     const [currentTask, setCurrentTask] = useState({});
     const [title, setTitle] = useState('');
@@ -82,7 +86,11 @@ function TaskTable() {
         {
             label: 'Delete',
             key: 'delete',
-            renderCell: (() => (<button>Delete</button>)),
+            renderCell: ((task: Task) => (
+                <button onClick={() => dispatch(deleteTask(task.id))}>
+                    Delete
+                </button>
+            )),
             comparator: () => null,
             filterType: null,
         },
@@ -94,7 +102,7 @@ function TaskTable() {
             <ManageTask
                 isOpen={isManageTaskOpen}
                 onClose={() => setIsManageTaskOpen(false)}
-                isEdit={false}
+                isEdit={true}
                 defaultValues={currentTask}
                 title={title}
             />
