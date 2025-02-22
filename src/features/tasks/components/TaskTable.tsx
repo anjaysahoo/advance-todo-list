@@ -4,6 +4,7 @@ import ManageTask from "./ManageTask.tsx";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@reduxjs/toolkit/query";
 import {deleteTask} from "../slices/task.slice.ts";
+import mustTaskColumnConfig from "../config/must-task-column.config.ts";
 
 type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
 type Status = 'completed' | 'in_progress' | 'not_started';
@@ -15,9 +16,6 @@ type Task = {
     status: Status;
 };
 
-const PRIORITY_OPTIONS = ['urgent', 'high', 'medium', 'low', 'none'];
-const STATUS_OPTIONS = ['completed', 'in_progress', 'not_started'];
-
 
 
 function TaskTable() {
@@ -27,47 +25,9 @@ function TaskTable() {
     const [currentTask, setCurrentTask] = useState({});
     const [title, setTitle] = useState('');
 
-    const taskColumns: Columns<Task> = [
-        {
-            label: 'ID',
-            key: 'id',
-            renderCell: (task: Task) => task.id,
-            comparator: (a: Task, b: Task, direction: SortDirection) =>
-                direction === 'asc' ? a.id - b.id : b.id - a.id,
-            filterType: null,
-        },
-        {
-            label: 'Title',
-            key: 'title',
-            renderCell: (task: Task) => task.title,
-            comparator: (a: Task, b: Task, direction: SortDirection) =>
-                direction === 'asc'
-                    ? a.title.localeCompare(b.title)
-                    : b.title.localeCompare(a.title),
-            filterType: 'string',
-        },
-        {
-            label: 'Priority',
-            key: 'priority',
-            renderCell: (task: Task) => task.priority,
-            comparator: (a: Task, b: Task, direction: SortDirection) =>
-                direction === 'asc'
-                    ? a.priority.localeCompare(b.priority)
-                    : b.priority.localeCompare(a.priority),
-            filterType: 'select',
-            filterOptions: PRIORITY_OPTIONS,
-        },
-        {
-            label: 'Status',
-            key: 'status',
-            renderCell: (task: Task) => task.status,
-            comparator: (a: Task, b: Task, direction: SortDirection) =>
-                direction === 'asc'
-                    ? a.status.localeCompare(b.status)
-                    : b.status.localeCompare(a.status),
-            filterType: 'select',
-            filterOptions: STATUS_OPTIONS,
-        },
+    const customTaskColumns: Columns<Task> = []
+
+    const editDeleteTaskColumns: Columns<Task> = [
         {
             label: 'Edit',
             key: 'edit',
@@ -98,7 +58,7 @@ function TaskTable() {
 
     return (
         <>
-            <Table data={tasks} columns={taskColumns}/>
+            <Table data={tasks} columns={[...mustTaskColumnConfig, ...customTaskColumns, ...editDeleteTaskColumns]}/>
             <ManageTask
                 isOpen={isManageTaskOpen}
                 onClose={() => setIsManageTaskOpen(false)}
