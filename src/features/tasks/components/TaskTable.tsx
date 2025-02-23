@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../../store/store.ts";
 import {deleteTask} from "../slices/task.slice.ts";
 import mustTaskColumnConfig from "../config/must-task-column.config.ts";
+import Modal from "../../../components/ui/Modal.tsx";
 
 type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
 type Status = 'completed' | 'in_progress' | 'not_started';
@@ -51,6 +52,7 @@ function TaskTable() {
     const tasks = useSelector((state: RootState) => state.tasks.tasks);
     const customFields = useSelector((state: RootState) => state.customFields.fields);
     const [isManageTaskOpen, setIsManageTaskOpen] = useState(false);
+    const [isDeleteTaskOpen, setIsDeleteTaskOpen] = useState(false);
     const [currentTask, setCurrentTask] = useState<Task | {}>({});
     const [title, setTitle] = useState('');
 
@@ -116,7 +118,10 @@ function TaskTable() {
             label: 'Delete',
             key: 'delete',
             renderCell: ((task: Task) => (
-                <button onClick={() => dispatch(deleteTask(task.id))}>
+                <button onClick={() => {
+                    setCurrentTask(task);
+                    setIsDeleteTaskOpen(true);
+                }}>
                     Delete
                 </button>
             )),
@@ -135,6 +140,18 @@ function TaskTable() {
                 defaultValues={currentTask}
                 title={title}
             />
+            <Modal
+                open={isDeleteTaskOpen}
+                title={title}
+                onClose={() => setIsDeleteTaskOpen(false) }>
+                Are you sure you want to delete this task?
+                <button onClick={() => {
+                    dispatch(deleteTask(currentTask?.id));
+                    setIsDeleteTaskOpen(false);
+                }}>
+                    Delete
+                </button>
+            </Modal>
         </>
     );
 }

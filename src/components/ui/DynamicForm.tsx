@@ -25,7 +25,7 @@ const getValidationByType = (type: string): z.ZodType => {
         case 'number':
             return z.coerce.number().min(-999999).max(999999); //https://www.reddit.com/r/reactjs/comments/1arbsec/how_do_you_work_with_numbers_within_forms_rhf_zod/?rdt=62491
         case 'text':
-            return z.string().min(1, "Field cannot be empty");
+            return z.string().nullish();
         case 'checkbox':
             return z.boolean();
         default:
