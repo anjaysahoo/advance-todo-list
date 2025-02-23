@@ -1,5 +1,6 @@
 import {FieldConfig} from "../../../components/ui/DynamicForm.tsx";
 import { z } from "zod";
+import { createLabelValidation } from "../utils/validation/custom-field.validation.ts";
 
 const customFieldsFormConfig: FieldConfig[] = [
     {
@@ -7,7 +8,7 @@ const customFieldsFormConfig: FieldConfig[] = [
         label: "Name",
         type: "text",
         placeholder: "Enter Field Name",
-        validation: z.string().min(2, "Name is too short").regex(/^[A-Za-z0-9 _]*[A-Za-z0-9][A-Za-z0-9 _]*$/, "Special character not allowed"), // Require at least 2 characters
+        validation: createLabelValidation(),
     },
     {
         key: "type",
@@ -19,7 +20,7 @@ const customFieldsFormConfig: FieldConfig[] = [
             { value: "number", label: "Number" },
             { value: "checkbox", label: "Checkbox" },
         ],
-        validation: z.string().min(1, "Status is required"), // Ensure a value is selected
+        validation: z.string().min(1, "Type is required"),
     }
 ];
 

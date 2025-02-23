@@ -1,9 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import taskReducer from '../features/tasks/slices/task.slice.ts';
 import customFieldsReducer from '../features/tasks/slices/custom-fields.slice.ts';
-import { fetchInitialTasks } from '../features/tasks/services/task.service';
-import {localStorageMiddleware} from "./localStorage.middleware.ts";
+import { localStorageMiddleware } from './localStorage.middleware.ts';
+import {fetchInitialTasks} from "../features/tasks/services/task.service.ts";
 
+// Create a store instance holder
+let storeInstance: ReturnType<typeof configureStore>;
+
+// Load initial state from localStorage
 const loadState = async () => {
     try {
         const tasksData = localStorage.getItem('tasks');
@@ -31,11 +35,10 @@ const loadState = async () => {
     }
 };
 
-let store: ReturnType<typeof configureStore>;
-const initializeStore = async () => {
+export const initializeStore = async () => {
     const preloadedState = await loadState();
     
-    store = configureStore({
+    storeInstance = configureStore({
         reducer: {
             tasks: taskReducer,
             customFields: customFieldsReducer
@@ -45,9 +48,16 @@ const initializeStore = async () => {
             getDefaultMiddleware().concat(localStorageMiddleware)
     });
     
-    return store;
+    return storeInstance;
 };
 
-export { initializeStore };
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+// Helper to get store instance
+export const getStore = () => {
+    if (!storeInstance) {
+        throw new Error('Store not initialized');
+    }
+    return storeInstance;
+};
+
+export type RootState = ReturnType<typeof storeInstance.getState>;
+export type AppDispatch = typeof storeInstance.dispatch;
