@@ -2,6 +2,7 @@ import TaskTable from "../../features/tasks/components/TaskTable.tsx";
 import {useState} from "react";
 import ManageTask from "../../features/tasks/components/ManageTask.tsx";
 import ManageCustomFields from "../../features/tasks/components/ManageCustomFields.tsx";
+import { Button } from "@/components/ui/button.tsx";
 
 
 function Task() {
@@ -12,7 +13,7 @@ function Task() {
         <main>
             <h1>Task Management</h1>
             <nav>
-                <button onClick={() => setIsManageCustomFieldsOpen(true)}>Manage Custom Fields</button>
+                <Button onClick={() => setIsManageCustomFieldsOpen(true)}>Manage Custom Fields</Button>
                 <button onClick={() => setIsManageTaskOpen(true)}>Create Task</button>
             </nav>
             <TaskTable/>
