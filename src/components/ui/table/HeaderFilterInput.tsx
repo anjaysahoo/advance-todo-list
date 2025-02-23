@@ -44,6 +44,7 @@ export default function HeaderFilterInput({
                 switch (filterType) {
                     case 'select': {
                         const filterData = filters[field] as FilterPayloadSelect | null;
+                        const currentValues = filterData?.values || [];
 
                         return (
                             <>
@@ -54,39 +55,25 @@ export default function HeaderFilterInput({
                                             name={field}
                                             id={`${field}-${option.value}`}
                                             value={option.value}
-                                            checked={filterData?.values?.includes(option.value)}
+                                            checked={currentValues.includes(option.value)}
                                             onChange={(event) => {
                                                 const value = event.target.value;
-                                                let newFilters: Filters;
-                                                if(event.target.checked) {
-                                                    const newValues = [...filterData?.values || [], value];
-                                                    newFilters = {
-                                                        ...filters,
-                                                        [field]: {
-                                                            type: 'select',
-                                                            values: newValues,
-                                                            options: filterOptions || [],
-                                                        },
-                                                    };
-                                                }
-                                                else {
-                                                    const newValues = filterData?.values?.filter(val => val !== value);
-                                                    newFilters = {
-                                                        ...filters,
-                                                        [field]: {
-                                                            type: 'select',
-                                                            values: newValues || [],
-                                                            options: filterOptions || [],
-                                                        },
-                                                    };
-                                                }
+                                                const newValues = event.target.checked 
+                                                    ? [...currentValues, value]
+                                                    : currentValues.filter(val => val !== value);
+                                                
+                                                const newFilters: Filters = {
+                                                    ...filters,
+                                                    [field]: {
+                                                        type: 'select',
+                                                        values: newValues,
+                                                        options: filterOptions || [],
+                                                    },
+                                                };
                                                 onFilterChange(newFilters);
                                             }}
                                         />
-                                        <label
-                                            key={option.value}
-                                            htmlFor={`${field}-${option.value}`}
-                                        >
+                                        <label htmlFor={`${field}-${option.value}`}>
                                             {option.label}
                                         </label>
                                     </div>

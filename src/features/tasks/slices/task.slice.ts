@@ -17,7 +17,7 @@ interface TaskState {
 }
 
 const initialState: TaskState = {
-    tasks: tasks
+    tasks: []
 };
 
 const taskSlice = createSlice({
@@ -25,7 +25,7 @@ const taskSlice = createSlice({
     initialState,
     reducers: {
         addTask: (state, action: PayloadAction<Omit<Task, 'id'>>) => {
-            const newId = Math.max(...state.tasks.map(task => task.id)) + 1;
+            const newId = crypto.randomUUID();
             state.tasks.unshift({ ...action.payload, id: newId });
         },
         updateTask: (state, action: PayloadAction<Task>) => {
