@@ -1,3 +1,5 @@
+import {CircleX} from "lucide-react";
+
 export type FilterPayloadSelect = {
     type: 'select';
     values: string[];
@@ -146,7 +148,7 @@ export default function HeaderFilterInput({
                             ] as FilterPayloadRange | null;
 
                         return (
-                            <div className="filter-input--range">
+                            <div className="flex gap-2">
                                 <input
                                     placeholder="Min"
                                     type="number"
@@ -187,6 +189,11 @@ export default function HeaderFilterInput({
                                         onFilterChange(newFilters);
                                     }}
                                 />
+                                <CircleX onClick={() => {
+                                    const newFilters: Filters ={...filters}
+                                    delete newFilters[field];
+                                    onFilterChange(newFilters);
+                                }}/>
                             </div>
                         );
                     }

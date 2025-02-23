@@ -1,11 +1,12 @@
-import Table, {Columns, SortDirection} from "../../../components/ui/Table.tsx";
 import {useState} from "react";
 import ManageTask from "./ManageTask.tsx";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../../store/store.ts";
+import {RootState} from "@/store/store.ts";
 import {deleteTask} from "../slices/task.slice.ts";
 import mustTaskColumnConfig from "../config/must-task-column.config.ts";
 import Modal from "../../../components/ui/Modal.tsx";
+import CustomizableTable, {Columns, SortDirection} from "@/components/table/CustomizableTable.tsx";
+import {Pencil, Trash} from "lucide-react";
 
 type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
 type Status = 'completed' | 'in_progress' | 'not_started';
@@ -103,13 +104,16 @@ function TaskTable() {
             label: 'Edit',
             key: 'edit',
             renderCell: ((task: Task) => (
-                <button onClick={() => {
+                <Pencil size={18}
+                        strokeWidth={1.5}
+                        className="cursor-pointer"
+                        onClick={() => {
                     setIsManageTaskOpen(true);
                     setCurrentTask(task);
                     setTitle('Edit Task');
-                }}>
-                    Edit
-                </button>
+                }}
+                />
+
             )),
             comparator: () => null,
             filterType: null,
@@ -118,12 +122,14 @@ function TaskTable() {
             label: 'Delete',
             key: 'delete',
             renderCell: ((task: Task) => (
-                <button onClick={() => {
+                <Trash
+                    size={18}
+                    strokeWidth={1.5}
+                    className="cursor-pointer"
+                    onClick={() => {
                     setCurrentTask(task);
-                    setIsDeleteTaskOpen(true);
-                }}>
-                    Delete
-                </button>
+                    setIsDeleteTaskOpen(true);}}
+                />
             )),
             comparator: () => null,
             filterType: null,
@@ -132,7 +138,7 @@ function TaskTable() {
 
     return (
         <>
-            <Table data={tasks} columns={[...mustTaskColumnConfig, ...customTaskColumns, ...editDeleteTaskColumns]}/>
+            <CustomizableTable data={tasks} columns={[...mustTaskColumnConfig, ...customTaskColumns, ...editDeleteTaskColumns]}/>
             <ManageTask
                 isOpen={isManageTaskOpen}
                 onClose={() => setIsManageTaskOpen(false)}
