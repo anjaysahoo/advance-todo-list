@@ -4,7 +4,6 @@ import Modal from "../../../components/ui/Modal.tsx";
 import DynamicForm from "../../../components/ui/DynamicForm.tsx";
 import mustFieldsConfig from "../config/must-fields.config.ts";
 import {RootState} from "@reduxjs/toolkit/query";
-import { toast } from "sonner"
 
 function ManageTask({isOpen, onClose, isEdit, defaultValues, title=""}:  Readonly<{
     isOpen: boolean;
@@ -18,13 +17,6 @@ function ManageTask({isOpen, onClose, isEdit, defaultValues, title=""}:  Readonl
 
 
     const handleFormSubmit = (data) => {
-        toast("Event has been created", {
-            description: "Sunday, December 03, 2023 at 9:00 AM",
-            action: {
-                label: "Undo",
-                onClick: () => console.log("Undo"),
-            },
-        })
         if(isEdit && defaultValues?.id) {
             dispatch(updateTask({ ...data, id: defaultValues.id }));
         } else {
