@@ -1,9 +1,18 @@
 import { useState, useRef, useEffect } from 'react';
-import {ArrowDownNarrowWide, ArrowUpDown, ArrowUpWideNarrow, Filter} from 'lucide-react';
+import {ArrowDownNarrowWide, ArrowUpDown, ArrowUpWideNarrow, ChevronLeft, ChevronRight, Filter} from 'lucide-react';
 import { cn } from '@/lib/utils.ts';
 import HeaderFilterInput, {Filters} from "../table/HeaderFilterInput.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import {Button} from "@/components/ui/button.tsx";
+
 
 export type SortDirection = 'asc' | 'desc';
 type ColumnDef<T> = Readonly<{
@@ -254,6 +263,48 @@ function CustomizableTable<T>({ data, columns }: Readonly<{
           ))}
         </TableBody>
       </Table>
+        <hr />
+        <div className="flex justify-end gap-2 p-2">
+            <Select
+                aria-label="Page size"
+                defaultValue={'5'}
+                onValueChange={(value) => {
+                    setPageSize(Number(value));
+                    setPage(1);
+                }}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="5" />
+                </SelectTrigger>
+                <SelectContent>
+                    {[5, 10, 20].map((size) => (
+                        <SelectItem key={size} value={size.toString()}>Show {size}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            <div className="pages">
+                <Button
+                    disabled={page === 1}
+                    onClick={() => {
+                        setPage(page - 1);
+                    }}>
+                    <ChevronLeft />
+                </Button>
+                {maxPages === 0 ? (
+                    <span>0 pages</span>
+                ) : (
+                    <span aria-label="Page number">
+              &nbsp;Page {page} of {maxPages}&nbsp;
+            </span>
+                )}
+                <Button
+                    disabled={page === maxPages}
+                    onClick={() => {
+                        setPage(page + 1);
+                    }}>
+                    <ChevronRight />
+                </Button>
+            </div>
+        </div>
     </div>
   );
 }
