@@ -140,18 +140,14 @@ function CustomizableTable<T>({ data, columns }: Readonly<{
   columns: Columns<T>;
 }>) {
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
-    const [sortField, setSortField] = useState<string | null>(
-        null,
-    );
-    const [sortDirection, setSortDirection] =
-        useState<SortDirection>('asc');
+    const [pageSize, setPageSize] = useState(10);
+    const [sortField, setSortField] = useState<string | null>(null,);
+    const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+    const [filters, setFilters] = useState<Filters>({});
+    const [activeFilterCard, setActiveFilterCard] = useState<string | null>(null);
+    const filterCardRef = useRef<HTMLDivElement>(null);
 
-  const [filters, setFilters] = useState<Filters>({});
-  const [activeFilterCard, setActiveFilterCard] = useState<string | null>(null);
-  const filterCardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
+    useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (filterCardRef.current && !filterCardRef.current.contains(event.target as Node)) {
         setActiveFilterCard(null);
@@ -276,7 +272,7 @@ function CustomizableTable<T>({ data, columns }: Readonly<{
         <div className="flex justify-end gap-2 p-2">
             <Select
                 aria-label="Page size"
-                defaultValue={'5'}
+                defaultValue={'10'}
                 onValueChange={(value) => {
                     setPageSize(Number(value));
                     setPage(1);

@@ -13,7 +13,6 @@ function ManageCustomFields({isOpen, onClose}:  Readonly<{
     isOpen: boolean;
     onClose: () => void;
 }>)    {
-
     const dispatch = useDispatch();
     const customFieldsConfig = useSelector((state: RootState) => state.customFields.fields);
 
@@ -36,7 +35,6 @@ function ManageCustomFields({isOpen, onClose}:  Readonly<{
             type: newField.type
         }));
     };
-
 
 
     return (

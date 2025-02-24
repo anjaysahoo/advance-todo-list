@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import tasks from '.././data/tasks.json';
 
 type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
 type Status = 'completed' | 'in_progress' | 'not_started';

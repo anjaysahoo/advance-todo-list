@@ -159,6 +159,7 @@ function TaskTable() {
                     </div>
                     <Button
                         className="cursor-pointer"
+                        variant="destructive"
                         onClick={() => {
                         dispatch(deleteTask(currentTask?.id));
                         setIsDeleteTaskOpen(false);
