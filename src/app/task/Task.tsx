@@ -20,7 +20,7 @@ function Task() {
     return (
         <main className="p-10">
             <h1 className="text-3xl font-bold">Task Management</h1>
-            <nav className="flex gap-2 justify-end p-5">
+            <nav className="flex gap-5 justify-end p-5">
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger className="cursor-pointer"> <Ellipsis onClick={() => setIsManageCustomFieldsOpen(true)}/></TooltipTrigger>

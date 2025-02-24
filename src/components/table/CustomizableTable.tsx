@@ -251,9 +251,9 @@ function CustomizableTable<T>({ data, columns }: Readonly<{
             ))}
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {pageData.map((item) => (
-            <TableRow key={item.id}>
+        <TableBody className="h-50">
+          {pageData.length > 0 && pageData.map((item) => (
+            <TableRow key={item.id} >
               {columns.map(({ key, renderCell }) => (
                 <TableCell key={key}>
                     {renderCell(item)}
@@ -261,6 +261,15 @@ function CustomizableTable<T>({ data, columns }: Readonly<{
               ))}
             </TableRow>
           ))}
+            {
+                pageData.length === 0 && (
+                    <TableRow>
+                        <TableCell className="w-full h-50 text-center" colSpan={columns.length}>
+                            No data
+                        </TableCell>
+                    </TableRow>
+                )
+            }
         </TableBody>
       </Table>
         <hr />

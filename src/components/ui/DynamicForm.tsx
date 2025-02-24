@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -43,13 +42,13 @@ interface DynamicFormProps {
 const getValidationByType = (type: string): z.ZodType => {
     switch (type) {
         case 'number':
-            return z.coerce.number().min(-999999).max(999999); //https://www.reddit.com/r/reactjs/comments/1arbsec/how_do_you_work_with_numbers_within_forms_rhf_zod/?rdt=62491
+            return z.coerce.number().min(-999999).max(999999).nullish(); //https://www.reddit.com/r/reactjs/comments/1arbsec/how_do_you_work_with_numbers_within_forms_rhf_zod/?rdt=62491
         case 'text':
             return z.string().nullish();
         case 'checkbox':
-            return z.boolean();
+            return z.boolean().nullish();
         default:
-            return z.string();
+            return z.string().nullish();
     }
 };
 
