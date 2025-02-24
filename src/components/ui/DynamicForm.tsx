@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Loader2 } from "lucide-react"; // Import loading spinner icon
 
 import { Button } from "@/components/ui/button"
 import {
@@ -19,8 +20,8 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Define the structure for each form field
 export interface FieldConfig {
@@ -60,11 +61,19 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ config, defaultValues = {}, o
         )
     );
 
-    // Initialize react-hook-form with validation and default values
     const form = useForm({
-        resolver: zodResolver(schema), // Use Zod for validation
+        resolver: zodResolver(schema),
         defaultValues,
+        mode: "onChange", // Enable validation on change
     });
+
+    const { 
+        formState: { 
+            isSubmitting, 
+            isDirty, 
+            isValid 
+        }
+    } = form;
 
     return (
         <Form {...form}>
@@ -140,8 +149,19 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ config, defaultValues = {}, o
                         )}
                     />
                 ))}
-                <Button type="submit" className="w-full">
-                    Submit
+                <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={isSubmitting || !isDirty || !isValid}
+                >
+                    {isSubmitting ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Submitting...
+                        </>
+                    ) : (
+                        'Submit'
+                    )}
                 </Button>
             </form>
         </Form>
