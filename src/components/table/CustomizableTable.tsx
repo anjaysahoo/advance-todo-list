@@ -283,6 +283,7 @@ function CustomizableTable<T>({ data, columns }: Readonly<{
             </Select>
             <div className="pages">
                 <Button
+                    variant="outline" size="icon"
                     disabled={page === 1}
                     onClick={() => {
                         setPage(page - 1);
@@ -297,6 +298,7 @@ function CustomizableTable<T>({ data, columns }: Readonly<{
             </span>
                 )}
                 <Button
+                    variant="outline" size="icon"
                     disabled={page === maxPages}
                     onClick={() => {
                         setPage(page + 1);
