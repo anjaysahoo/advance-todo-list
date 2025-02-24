@@ -1,9 +1,9 @@
 # Mini Notion Like Task Management App 📑
 
 ## Demo
+![task-management-demo.gif](images/task-management-demo.gif)
 
-
-## Live APP
+## Live App(Give a try😎): https://z4lwp4-5173.csb.app/
 
 ## Features
 
@@ -35,7 +35,7 @@
 - Axios [HTTP Client]
 
 ## Folder Structure Followed
-![img.png](img.png)
+![img.png](images/img.png)
 
 For more details: https://www.youtube.com/watch?v=xyxrB2Aa7KE
 
