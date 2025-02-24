@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { getStore } from '../../../../store/store';
+import { getStore } from '@/store/store.ts';
 import mustFieldsConfig from "../../config/must-fields.config.ts";
 
 export const createLabelValidation = () => {

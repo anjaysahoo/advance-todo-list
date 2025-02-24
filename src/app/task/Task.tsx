@@ -2,6 +2,15 @@ import TaskTable from "../../features/tasks/components/TaskTable.tsx";
 import {useState} from "react";
 import ManageTask from "../../features/tasks/components/ManageTask.tsx";
 import ManageCustomFields from "../../features/tasks/components/ManageCustomFields.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {Ellipsis} from "lucide-react";
+
 
 
 function Task() {
@@ -9,11 +18,19 @@ function Task() {
     const [isManageTaskOpen, setIsManageTaskOpen] = useState(false);
 
     return (
-        <main>
-            <h1>Task Management</h1>
-            <nav>
-                <button onClick={() => setIsManageCustomFieldsOpen(true)}>Manage Custom Fields</button>
-                <button onClick={() => setIsManageTaskOpen(true)}>Create Task</button>
+        <main className="p-10">
+            <h1 className="text-3xl font-bold">Task Management</h1>
+            <nav className="flex gap-5 justify-end p-5">
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger className="cursor-pointer"> <Ellipsis onClick={() => setIsManageCustomFieldsOpen(true)}/></TooltipTrigger>
+                        <TooltipContent>
+                            <p>Manage Custom Fields</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+
+                <Button onClick={() => setIsManageTaskOpen(true)}>Create Task</Button>
             </nav>
             <TaskTable/>
             <ManageCustomFields

@@ -1,5 +1,5 @@
-import {Columns, SortDirection} from "../../../components/ui/Table.tsx";
 import {Task} from "../slices/task.slice.ts";
+import {Columns, SortDirection} from "@/components/table/CustomizableTable.tsx";
 
 export const STATUS_OPTIONS  = [
     { value: "completed", label: "Completed" },
