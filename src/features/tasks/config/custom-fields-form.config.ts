@@ -14,8 +14,8 @@ const customFieldsFormConfig: FieldConfig[] = [
         key: "type",
         label: "Type",
         type: "select",
+        placeholder: "Select Field Type",
         options: [
-            { value: "", label: "Select Field Type" },
             { value: "text", label: "Text" },
             { value: "number", label: "Number" },
             { value: "checkbox", label: "Checkbox" },

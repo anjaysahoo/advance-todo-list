@@ -14,8 +14,8 @@ const mustFieldsConfig: FieldConfig[] = [
         key: "status",
         label: "Status",
         type: "select",
+        placeholder: "Select Status",
         options: [
-            { value: "", label: "Select Status" },
             ...STATUS_OPTIONS
         ],
         validation: z.string().min(1, "Status is required"), // Ensure a value is selected
@@ -24,8 +24,8 @@ const mustFieldsConfig: FieldConfig[] = [
         key: "priority",
         label: "Priority",
         type: "select",
+        placeholder: "Select Priority",
         options: [
-            { value: "", label: "Select Priority" },
             ...PRIORITY_OPTIONS
         ],
         validation: z.string().min(1, "Priority is required"), // Ensure a value is selected

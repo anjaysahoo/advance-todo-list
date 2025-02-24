@@ -2,6 +2,26 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Loader2 } from "lucide-react"; // Import loading spinner icon
+
+import { Button } from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Define the structure for each form field
 export interface FieldConfig {
@@ -23,13 +43,13 @@ interface DynamicFormProps {
 const getValidationByType = (type: string): z.ZodType => {
     switch (type) {
         case 'number':
-            return z.coerce.number().min(-999999).max(999999); //https://www.reddit.com/r/reactjs/comments/1arbsec/how_do_you_work_with_numbers_within_forms_rhf_zod/?rdt=62491
+            return z.coerce.number().min(-999999).max(999999).nullish(); //https://www.reddit.com/r/reactjs/comments/1arbsec/how_do_you_work_with_numbers_within_forms_rhf_zod/?rdt=62491
         case 'text':
             return z.string().nullish();
         case 'checkbox':
-            return z.boolean();
+            return z.boolean().nullish();
         default:
-            return z.string();
+            return z.string().nullish();
     }
 };
 
@@ -41,52 +61,110 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ config, defaultValues = {}, o
         )
     );
 
-    // Initialize react-hook-form with validation and default values
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm({
-        resolver: zodResolver(schema), // Use Zod for validation
+    const form = useForm({
+        resolver: zodResolver(schema),
         defaultValues,
+        mode: "onChange", // Enable validation on change
     });
 
+    const { 
+        formState: { 
+            isSubmitting, 
+            isDirty, 
+            isValid 
+        }
+    } = form;
+
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            {config.map((field) => (
-                <div key={field.key}>
-                    <label>{field.label}</label>
-                    {/* Render input field based on type */}
-                    {field.type === "text" && (
-                        <input
-                            type="text"
-                            placeholder={field.placeholder || ""}
-                            {...register(field.key)}
-                        />
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-100 space-y-4">
+                {config.map((field) => (
+                    <FormField
+                        key={field.key}
+                        control={form.control}
+                        name={field.key}
+                        render={({ field: formField }) => (
+                            <FormItem>
+                                <FormLabel>{field.label}</FormLabel>
+                                {field.type === "text" && (
+                                    <FormControl>
+                                        <Input
+                                            placeholder={field.placeholder || ""}
+                                            {...formField}
+                                        />
+                                    </FormControl>
+                                )}
+                                {field.type === "number" && (
+                                    <FormControl>
+                                        <Input
+                                            type="number"
+                                            placeholder={field.placeholder || ""}
+                                            {...formField}
+                                            onChange={(e) => {
+                                                const value = e.target.value === '' ? '' : e.target.valueAsNumber;
+                                                formField.onChange(value);
+                                            }}
+                                        />
+                                    </FormControl>
+                                )}
+                                {field.type === "select" && (
+                                    <FormControl>
+                                        <Select
+                                            onValueChange={formField.onChange}
+                                            defaultValue={formField.value}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={field.placeholder} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {field.options?.map((option) => (
+                                                    <SelectItem
+                                                        key={option.value}
+                                                        value={option.value}
+                                                    >
+                                                        {option.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                )}
+                                {field.type === "checkbox" && (
+                                    <FormControl>
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                checked={formField.value}
+                                                onCheckedChange={formField.onChange}
+                                            />
+                                            {field.placeholder && (
+                                                <span className="text-sm text-muted-foreground">
+                                                    {field.placeholder}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </FormControl>
+                                )}
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                ))}
+                <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={isSubmitting || !isDirty || !isValid}
+                >
+                    {isSubmitting ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Submitting...
+                        </>
+                    ) : (
+                        'Submit'
                     )}
-                    {/* Render select dropdown if type is 'select' */}
-                    {field.type === "select" && (
-                        <select {...register(field.key)}>
-                            {field.options?.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </select>
-                    )}
-                    {/* Render checkbox if type is 'checkbox' */}
-                    {field.type === "checkbox" && (
-                        <input type="checkbox" {...register(field.key)} />
-                    )}
-                    {field.type === "number" && (
-                        <input type="number" {...register(field.key)} />
-                    )}
-                    {/* Display error message if validation fails */}
-                    {errors[field.key] && <p>{errors[field.key].message}</p>}
-                </div>
-            ))}
-            <button type="submit">Submit</button>
-        </form>
+                </Button>
+            </form>
+        </Form>
     );
 };
 
