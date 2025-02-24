@@ -7,6 +7,7 @@ import mustTaskColumnConfig from "../config/must-task-column.config.ts";
 import Modal from "../../../components/ui/Modal.tsx";
 import CustomizableTable, {Columns, SortDirection} from "@/components/table/CustomizableTable.tsx";
 import {Pencil, Trash} from "lucide-react";
+import {Button} from "@/components/ui/button.tsx";
 
 type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
 type Status = 'completed' | 'in_progress' | 'not_started';
@@ -128,7 +129,9 @@ function TaskTable() {
                     className="cursor-pointer"
                     onClick={() => {
                     setCurrentTask(task);
-                    setIsDeleteTaskOpen(true);}}
+                    setIsDeleteTaskOpen(true);
+                        setTitle('Delete Task');
+                    }}
                 />
             )),
             comparator: () => null,
@@ -150,13 +153,19 @@ function TaskTable() {
                 open={isDeleteTaskOpen}
                 title={title}
                 onClose={() => setIsDeleteTaskOpen(false) }>
-                Are you sure you want to delete this task?
-                <button onClick={() => {
-                    dispatch(deleteTask(currentTask?.id));
-                    setIsDeleteTaskOpen(false);
-                }}>
-                    Delete
-                </button>
+                <div className="flex flex-col gap-4">
+                    <div>
+                        Are you sure you want to delete this task?
+                    </div>
+                    <Button
+                        className="cursor-pointer"
+                        onClick={() => {
+                        dispatch(deleteTask(currentTask?.id));
+                        setIsDeleteTaskOpen(false);
+                    }}>
+                        Delete
+                    </Button>
+                </div>
             </Modal>
         </>
     );

@@ -1,5 +1,6 @@
 import {ComponentProps, RefObject, useEffect, useId, useRef} from 'react';
 import {createPortal} from 'react-dom';
+import {SquareX} from "lucide-react";
 
 function Modal({
                    open = false,
@@ -94,14 +95,18 @@ function ModalImpl({
             <div
                 aria-describedby={contentId}
                 aria-labelledby={titleId}
-                className="modal"
+                className="modal "
                 role="dialog"
                 ref={dialogRef}>
-                <h1 className="modal-title" id={titleId}>
-                    {title}
+                <h1 className="flex justify-between w-full text-xl font-bold" id={titleId}>
+                    <p>{title}</p>
+                    <SquareX
+                        className="cursor-pointer"
+                        onClick={onClose}
+                    />
                 </h1>
                 <div id={contentId}>{children}</div>
-                <button onClick={onClose}>Close</button>
+
             </div>
         </div>,
         document.body,
