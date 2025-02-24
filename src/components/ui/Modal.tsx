@@ -88,7 +88,7 @@ function ModalImpl({
     const dialogRef = useRef<HTMLDivElement>(null);
 
     useOnKeyDown('Escape', onClose);
-    useOnClickOutside(dialogRef, onClose);
+    // useOnClickOutside(dialogRef, onClose);
 
     return createPortal(
         <div className="modal-overlay">
@@ -106,7 +106,6 @@ function ModalImpl({
                     />
                 </h1>
                 <div id={contentId}>{children}</div>
-
             </div>
         </div>,
         document.body,
