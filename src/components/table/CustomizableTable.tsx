@@ -4,6 +4,13 @@ import { cn } from '@/lib/utils.ts';
 import HeaderFilterInput, {Filters} from "../table/HeaderFilterInput.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 export type SortDirection = 'asc' | 'desc';
 type ColumnDef<T> = Readonly<{
@@ -254,6 +261,17 @@ function CustomizableTable<T>({ data, columns }: Readonly<{
           ))}
         </TableBody>
       </Table>
+        <Select>
+            <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Theme" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+            </SelectContent>
+        </Select>
+
     </div>
   );
 }
