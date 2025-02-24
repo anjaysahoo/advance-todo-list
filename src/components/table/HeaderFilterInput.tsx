@@ -143,7 +143,7 @@ export default function HeaderFilterInput({
                         return (
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
-                                    <input
+                                    <Input
                                         placeholder="Min"
                                         type="number"
                                         value={filterData?.min || ''}
@@ -162,7 +162,7 @@ export default function HeaderFilterInput({
                                         }}
                                         className="w-24"
                                     />
-                                    <input
+                                    <Input
                                         placeholder="Max"
                                         type="number"
                                         value={filterData?.max || ''}
