@@ -4,7 +4,6 @@ import Modal from "../../../components/ui/Modal.tsx";
 import DynamicForm from "../../../components/ui/DynamicForm.tsx";
 import mustFieldsConfig from "../config/must-fields.config.ts";
 import {RootState} from "@reduxjs/toolkit/query";
-import { toast } from "sonner"
 
 function ManageTask({isOpen, onClose, isEdit, defaultValues, title=""}:  Readonly<{
     isOpen: boolean;
