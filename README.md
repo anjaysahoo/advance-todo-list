@@ -59,6 +59,7 @@ subsequent load of app will load task from local storage.
 
 - More robust Typescript implementation
 - Enhancing more on Zod implementation
+- Husky to enforce strict linting while committing code 
 - Use Eslint-boundaries to enforce better folder structure
 - Handling loading and updating task through API with infinite scroll
 - Coming up with more features like we have in Notion
