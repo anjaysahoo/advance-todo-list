@@ -63,3 +63,10 @@ subsequent load of app will load task from local storage.
 - Use Eslint-boundaries to enforce better folder structure
 - Handling loading and updating task through API with infinite scroll
 - Coming up with more features like we have in Notion
+
+## Limitations
+
+1. Above table works well if data is not large such that we can load whole data at once and 
+then apply our filter and sorting
+2. Practical scenario where we may want to use such table where we want to give this filter and sorting 
+functionality but don't want our backend to make changes and there are multiple such table on application
