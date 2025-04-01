@@ -1,24 +1,29 @@
-import {useDispatch, useSelector} from 'react-redux';
-import { addTask, updateTask } from '../slices/task.slice.ts';
-import Modal from "../../../components/ui/Modal.tsx";
-import DynamicForm from "../../../components/ui/DynamicForm.tsx";
-import mustFieldsConfig from "../config/must-fields.config.ts";
-import {RootState} from "@reduxjs/toolkit/query";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "@/store/store";
+import {addTask, updateTask} from "../slices/task.slice";
+import Modal from "../../../components/ui/Modal";
+import DynamicForm from "../../../components/ui/DynamicForm";
+import mustFieldsConfig from "../config/must-fields.config";
+import {Task} from "../types/task.types";
 
-function ManageTask({isOpen, onClose, isEdit, defaultValues, title=""}:  Readonly<{
+interface ManageTaskProps {
     isOpen: boolean;
     onClose: () => void;
     isEdit: boolean;
-    defaultValues?: Record<string, any>;
-    title?: string
-}>)   {
+    defaultValues?: Task;
+    title: string;
+}
+
+function ManageTask({isOpen, onClose, isEdit, defaultValues, title}: ManageTaskProps) {
     const dispatch = useDispatch();
     const customFieldsConfig = useSelector((state: RootState) => state.customFields.fields);
 
-
-    const handleFormSubmit = (data) => {
-        if(isEdit && defaultValues?.id) {
-            dispatch(updateTask({ ...data, id: defaultValues.id }));
+    const handleFormSubmit = (data: Record<string, any>) => {
+        if (isEdit && defaultValues) {
+            dispatch(updateTask({
+                ...defaultValues,
+                ...data,
+            }));
         } else {
             dispatch(addTask(data));
         }
@@ -26,15 +31,17 @@ function ManageTask({isOpen, onClose, isEdit, defaultValues, title=""}:  Readonl
     };
 
     return (
-        <>
-            <Modal
-                open={isOpen}
-                title={title}
-                onClose={onClose}>
-                <DynamicForm config={[...mustFieldsConfig,...customFieldsConfig]} defaultValues={defaultValues} onSubmit={handleFormSubmit} />
-            </Modal>
-        </>
-    )
+        <Modal
+            open={isOpen}
+            title={title}
+            onClose={onClose}>
+            <DynamicForm
+                config={[...mustFieldsConfig, ...customFieldsConfig]}
+                onSubmit={handleFormSubmit}
+                defaultValues={defaultValues}
+            />
+        </Modal>
+    );
 }
 
 export default ManageTask;

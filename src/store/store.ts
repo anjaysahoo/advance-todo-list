@@ -1,63 +1,40 @@
 import { configureStore } from '@reduxjs/toolkit';
-import taskReducer from '../features/tasks/slices/task.slice.ts';
-import customFieldsReducer from '../features/tasks/slices/custom-fields.slice.ts';
-import { localStorageMiddleware } from './localStorage.middleware.ts';
-import {fetchInitialTasks} from "../features/tasks/services/task.service.ts";
+import tasksReducer, { TaskState } from '../features/tasks/slices/task.slice';
+import customFieldsReducer, { CustomFieldsState } from '../features/tasks/slices/custom-fields.slice';
+import { localStorageMiddleware } from './localStorage.middleware';
+import { fetchInitialTasks } from '../features/tasks/services/task.service';
 
-// Create a store instance holder
-let storeInstance: ReturnType<typeof configureStore>;
+export interface AppState {
+    tasks: TaskState;
+    customFields: CustomFieldsState;
+}
 
-// Load initial state from localStorage
-const loadState = async () => {
-    try {
-        const tasksData = localStorage.getItem('tasks');
-        const customFieldsData = localStorage.getItem('customFields');
-        
-        let tasks = [];
-        if (tasksData) {
-            tasks = JSON.parse(tasksData);
-        } else {
-            tasks = await fetchInitialTasks();
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-        }
-        
-        return {
-            tasks: {
-                tasks
-            },
-            customFields: {
-                fields: customFieldsData ? JSON.parse(customFieldsData) : []
-            }
-        };
-    } catch (err) {
-        console.error('Error loading state:', err);
-        return undefined;
-    }
-};
+const createStore = () => configureStore({
+    reducer: {
+        tasks: tasksReducer,
+        customFields: customFieldsReducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(localStorageMiddleware),
+});
+
+let store: ReturnType<typeof createStore> | null = null;
 
 export const initializeStore = async () => {
-    const preloadedState = await loadState();
+    const initialTasks = await fetchInitialTasks();
     
-    storeInstance = configureStore({
-        reducer: {
-            tasks: taskReducer,
-            customFields: customFieldsReducer
-        },
-        preloadedState,
-        middleware: (getDefaultMiddleware) => 
-            getDefaultMiddleware().concat(localStorageMiddleware)
-    });
+    store = createStore();
+    store.dispatch({ type: 'tasks/setTasks', payload: initialTasks });
     
-    return storeInstance;
+    return store;
 };
 
-// Helper to get store instance
+export type RootState = AppState;
+export type AppDispatch = ReturnType<typeof createStore>['dispatch'];
+
 export const getStore = () => {
-    if (!storeInstance) {
+    if (!store) {
         throw new Error('Store not initialized');
     }
-    return storeInstance;
+    return store;
 };
-
-export type RootState = ReturnType<typeof storeInstance.getState>;
-export type AppDispatch = typeof storeInstance.dispatch;

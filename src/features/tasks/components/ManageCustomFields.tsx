@@ -1,24 +1,23 @@
-import Modal from "../../../components/ui/Modal.tsx";
-import DynamicForm from "../../../components/ui/DynamicForm.tsx";
-import camelize from "../utils/helper/camelize.helper.ts";
-import customFieldsFormConfig from "../config/custom-fields-form.config.ts";
+import Modal from "../../../components/ui/Modal";
+import DynamicForm from "../../../components/ui/DynamicForm";
+import customFieldsFormConfig from "../config/custom-fields-form.config";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "@/store/store.ts";
-import {addCustomField, deleteCustomField} from "../slices/custom-fields.slice.ts";
-import {addCustomFieldToTasks} from "../slices/task.slice.ts";
+import {RootState} from "@/store/store";
+import {addCustomField, removeCustomField} from "../slices/custom-fields.slice";
+import {addCustomFieldToTasks} from "../slices/task.slice";
 import {Trash} from "lucide-react";
-import { Button } from "@/components/ui/button.tsx";
+import { Button } from "@/components/ui/button";
 
-function ManageCustomFields({isOpen, onClose}:  Readonly<{
+function ManageCustomFields({isOpen, onClose}: Readonly<{
     isOpen: boolean;
     onClose: () => void;
-}>)    {
+}>) {
     const dispatch = useDispatch();
     const customFieldsConfig = useSelector((state: RootState) => state.customFields.fields);
 
     const handleFormSubmit = (data: Record<string, any>) => {
         const newField = {
-            key: camelize(data.label),
+            key: data.label.toLowerCase().replace(/\s+/g, '_'),
             label: data.label,
             type: data.type,
             placeholder: `Enter ${data.label}`,
@@ -36,12 +35,11 @@ function ManageCustomFields({isOpen, onClose}:  Readonly<{
         }));
     };
 
-
     return (
         <div>
             <Modal
                 open={isOpen}
-                title={"Manage Custom Fields"}
+                title="Manage Custom Fields"
                 onClose={onClose}>
                 <h3 className="font-bold py-2">Add New Custom Field</h3>
                 <DynamicForm config={customFieldsFormConfig} onSubmit={handleFormSubmit} />
@@ -58,7 +56,7 @@ function ManageCustomFields({isOpen, onClose}:  Readonly<{
                                 variant="destructive"
                                 size="icon"
                                 className="cursor-pointer"
-                                onClick={() => dispatch(deleteCustomField(field.key))}>
+                                onClick={() => dispatch(removeCustomField(field.key))}>
                                 <Trash />
                             </Button>
                         </li>

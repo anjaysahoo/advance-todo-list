@@ -1,4 +1,4 @@
-import {ComponentProps, RefObject, useEffect, useId, useRef} from 'react';
+import {ComponentProps, useEffect, useId, useRef} from 'react';
 import {createPortal} from 'react-dom';
 import {SquareX} from "lucide-react";
 
@@ -36,43 +36,43 @@ function useOnKeyDown(key: string, fn: () => void) {
     }, [fn]);
 }
 
-/**
- * Invokes a function when clicking outside an element.
- */
-function useOnClickOutside(
-    elRef: RefObject<HTMLDivElement>,
-    fn: () => void,
-) {
-    // Add event handling for close when clicking outside.
-    useEffect(() => {
-        function onClickOutside(
-            event: MouseEvent | TouchEvent,
-        ) {
-            // No-op if clicked element is a descendant of element's contents.
-            if (
-                event.target instanceof Node &&
-                elRef.current != null &&
-                !elRef.current?.contains(event.target)
-            ) {
-                fn();
-            }
-        }
-
-        document.addEventListener('mousedown', onClickOutside);
-        document.addEventListener('touchstart', onClickOutside);
-
-        return () => {
-            document.removeEventListener(
-                'mousedown',
-                onClickOutside,
-            );
-            document.removeEventListener(
-                'touchstart',
-                onClickOutside,
-            );
-        };
-    }, [fn]);
-}
+// /**
+//  * Invokes a function when clicking outside an element.
+//  */
+// function useOnClickOutside(
+//     elRef: RefObject<HTMLDivElement>,
+//     fn: () => void,
+// ) {
+//     // Add event handling for close when clicking outside.
+//     useEffect(() => {
+//         function onClickOutside(
+//             event: MouseEvent | TouchEvent,
+//         ) {
+//             // No-op if clicked element is a descendant of element's contents.
+//             if (
+//                 event.target instanceof Node &&
+//                 elRef.current != null &&
+//                 !elRef.current?.contains(event.target)
+//             ) {
+//                 fn();
+//             }
+//         }
+//
+//         document.addEventListener('mousedown', onClickOutside);
+//         document.addEventListener('touchstart', onClickOutside);
+//
+//         return () => {
+//             document.removeEventListener(
+//                 'mousedown',
+//                 onClickOutside,
+//             );
+//             document.removeEventListener(
+//                 'touchstart',
+//                 onClickOutside,
+//             );
+//         };
+//     }, [fn]);
+// }
 
 function ModalImpl({
                        children,

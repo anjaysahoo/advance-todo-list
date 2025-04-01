@@ -1,36 +1,35 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type CustomFieldConfig = {
+export interface CustomField {
     key: string;
     label: string;
     type: "text" | "select" | "checkbox" | "number";
-    placeholder?: string;
     options?: { value: string; label: string }[];
-};
+}
 
-interface CustomFieldsState {
-    fields: CustomFieldConfig[];
+export interface CustomFieldsState {
+    fields: CustomField[];
 }
 
 const initialState: CustomFieldsState = {
-    fields: []
+    fields: [],
 };
-
-
 
 const customFieldsSlice = createSlice({
     name: 'customFields',
     initialState,
     reducers: {
-        addCustomField: (state, action: PayloadAction<CustomFieldConfig>) => {
-            console.log("Adding custom field:", action.payload);
+        addCustomField: (state, action: PayloadAction<CustomField>) => {
             state.fields.push(action.payload);
         },
-        deleteCustomField: (state, action: PayloadAction<string>) => {
+        removeCustomField: (state, action: PayloadAction<string>) => {
             state.fields = state.fields.filter(field => field.key !== action.payload);
-        }
-    }
+        },
+        setCustomFields: (state, action: PayloadAction<CustomField[]>) => {
+            state.fields = action.payload;
+        },
+    },
 });
 
-export const { addCustomField, deleteCustomField } = customFieldsSlice.actions;
+export const { addCustomField, removeCustomField, setCustomFields } = customFieldsSlice.actions;
 export default customFieldsSlice.reducer; 

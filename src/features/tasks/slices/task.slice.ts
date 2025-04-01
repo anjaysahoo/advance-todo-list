@@ -1,41 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Task } from '../types/task.types';
 
-type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
-type Status = 'completed' | 'in_progress' | 'not_started';
-
-export type Task = {
-    id: number;
-    title: string;
-    priority: Priority;
-    status: Status;
-    [key: string]: any; // Allow dynamic fields
-};
-
-interface TaskState {
+export interface TaskState {
     tasks: Task[];
 }
 
 const initialState: TaskState = {
-    tasks: []
+    tasks: [],
 };
 
 const taskSlice = createSlice({
     name: 'tasks',
     initialState,
     reducers: {
+        setTasks: (state, action: PayloadAction<Task[]>) => {
+            state.tasks = action.payload;
+        },
         addTask: (state, action: PayloadAction<Omit<Task, 'id'>>) => {
-            const newId = crypto.randomUUID();
-            state.tasks.unshift({ ...action.payload, id: newId });
+            const newId = state.tasks.length > 0 ? Math.max(...state.tasks.map(t => t.id)) + 1 : 1;
+            state.tasks.unshift({ ...action.payload, id: newId } as Task);
         },
         updateTask: (state, action: PayloadAction<Task>) => {
-            console.log("Updating task :", action.payload);
             const index = state.tasks.findIndex(task => task.id === action.payload.id);
             if (index !== -1) {
                 state.tasks[index] = action.payload;
             }
         },
         deleteTask: (state, action: PayloadAction<number>) => {
-            console.log("Deleting task with ID:", action.payload);
             state.tasks = state.tasks.filter(task => task.id !== action.payload);
         },
         addCustomFieldToTasks: (state, action: PayloadAction<{key: string, type: string}>) => {
@@ -60,5 +51,5 @@ const getDefaultValue = (type: string) => {
     }
 };
 
-export const { addTask, updateTask, deleteTask, addCustomFieldToTasks } = taskSlice.actions;
+export const { setTasks, addTask, updateTask, deleteTask, addCustomFieldToTasks } = taskSlice.actions;
 export default taskSlice.reducer;

@@ -1,38 +1,21 @@
 import {useState} from "react";
-import ManageTask from "./ManageTask.tsx";
+import ManageTask from "./ManageTask";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "@/store/store.ts";
-import {deleteTask} from "../slices/task.slice.ts";
-import mustTaskColumnConfig from "../config/must-task-column.config.ts";
-import Modal from "../../../components/ui/Modal.tsx";
-import CustomizableTable, {Columns, SortDirection} from "@/components/table/CustomizableTable.tsx";
+import {RootState} from "@/store/store";
+import {deleteTask} from "../slices/task.slice";
+import mustTaskColumnConfig from "../config/must-task-column.config";
+import Modal from "../../../components/ui/Modal";
+import CustomizableTable, {Columns, SortDirection} from "@/components/table/CustomizableTable";
 import {Pencil, Trash} from "lucide-react";
-import {Button} from "@/components/ui/button.tsx";
+import {Button} from "@/components/ui/button";
+import { Task } from '../types/task.types';
 
-type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
-type Status = 'completed' | 'in_progress' | 'not_started';
-
-type Task = {
-    id: number;
-    title: string;
-    priority: Priority;
-    status: Status;
-    [key: string]: any;
-};
-
-// Helper functions moved to the top
-const getFilterType = (type: string): 'string' | 'range' | 'select' | 'radio' | null => {
-    switch (type) {
-        case 'number':
-            return 'range';
-        case 'text':
-            return 'string';
-        case 'checkbox':
-            return 'radio';
-        default:
-            return null;
-    }
-};
+interface CustomField {
+    key: string;
+    label: string;
+    type: string;
+    options?: { value: string; label: string }[];
+}
 
 const getDefaultValue = (type: string) => {
     switch (type) {
@@ -47,18 +30,30 @@ const getDefaultValue = (type: string) => {
     }
 };
 
+const getFilterType = (type: string): 'string' | 'range' | 'select' | 'radio' | null => {
+    switch (type) {
+        case 'number':
+            return 'range';
+        case 'text':
+            return 'string';
+        case 'checkbox':
+            return 'radio';
+        default:
+            return null;
+    }
+};
 
 function TaskTable() {
-    const checkboxOrder = { true: 1, false: 2, null: 3 };
+    const checkboxOrder: Record<string, number> = { 'true': 1, 'false': 2, 'null': 3 };
     const dispatch = useDispatch();
     const tasks = useSelector((state: RootState) => state.tasks.tasks);
     const customFields = useSelector((state: RootState) => state.customFields.fields);
     const [isManageTaskOpen, setIsManageTaskOpen] = useState(false);
     const [isDeleteTaskOpen, setIsDeleteTaskOpen] = useState(false);
-    const [currentTask, setCurrentTask] = useState<Task | {}>({});
+    const [currentTask, setCurrentTask] = useState<Task | undefined>(undefined);
     const [title, setTitle] = useState('');
 
-    const customTaskColumns: Columns<Task> = customFields.map(field => ({
+    const customTaskColumns: Columns<Task> = customFields.map((field: CustomField) => ({
         label: field.label,
         key: field.key,
         renderCell: (task: Task) => {
@@ -74,23 +69,18 @@ function TaskTable() {
             return task[field.key] ?? getDefaultValue(field.type);
         },
         comparator: (a: Task, b: Task, direction: SortDirection) => {
-            const aVal = a[field.key] ?? getDefaultValue(field.type);
-            const bVal = b[field.key] ?? getDefaultValue(field.type);
+            const aVal = String(a[field.key] ?? getDefaultValue(field.type));
+            const bVal = String(b[field.key] ?? getDefaultValue(field.type));
 
-            switch (field.type) {
-                case 'number':
-                    return direction === 'asc' ?
-                        Number(aVal) - Number(bVal) :
-                        Number(bVal) - Number(aVal);
-                case 'checkbox':
-                    return direction === 'asc' ?
-                        checkboxOrder[aVal] - checkboxOrder[bVal] :
-                        checkboxOrder[bVal] - checkboxOrder[aVal];
-                default:
-                    return direction === 'asc' ?
-                        String(aVal).localeCompare(String(bVal)) :
-                        String(bVal).localeCompare(String(aVal));
+            if (field.type === 'checkbox') {
+                return direction === 'asc' ?
+                    checkboxOrder[aVal] - checkboxOrder[bVal] :
+                    checkboxOrder[bVal] - checkboxOrder[aVal];
             }
+
+            return direction === 'asc' ?
+                String(aVal).localeCompare(String(bVal)) :
+                String(bVal).localeCompare(String(aVal));
         },
         filterType: getFilterType(field.type),
         filterOptions: field.type === 'checkbox' ? [
@@ -114,9 +104,8 @@ function TaskTable() {
                     setTitle('Edit Task');
                 }}
                 />
-
             )),
-            comparator: () => null,
+            comparator: () => 0,
             filterType: null,
         },
         {
@@ -130,11 +119,11 @@ function TaskTable() {
                     onClick={() => {
                     setCurrentTask(task);
                     setIsDeleteTaskOpen(true);
-                        setTitle('Delete Task');
+                    setTitle('Delete Task');
                     }}
                 />
             )),
-            comparator: () => null,
+            comparator: () => 0,
             filterType: null,
         },
     ];
@@ -161,9 +150,11 @@ function TaskTable() {
                         className="cursor-pointer"
                         variant="destructive"
                         onClick={() => {
-                        dispatch(deleteTask(currentTask?.id));
-                        setIsDeleteTaskOpen(false);
-                    }}>
+                            if (currentTask?.id) {
+                                dispatch(deleteTask(currentTask.id));
+                                setIsDeleteTaskOpen(false);
+                            }
+                        }}>
                         Delete
                     </Button>
                 </div>

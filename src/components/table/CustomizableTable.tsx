@@ -19,11 +19,16 @@ type ColumnDef<T> = Readonly<{
     label: string;
     key: string;
     renderCell: (row: T) => React.ReactNode;
-    comparator: (a: T, b: T, sortDirection: SortDirection) => number | null;
+    comparator: (a: T, b: T, sortDirection: SortDirection) => number;
     filterType: 'string' | 'range' | 'select' | 'radio' | null;
     filterOptions?: {value: string, label: string}[];
 }>;
 export type Columns<T> = ReadonlyArray<ColumnDef<T>>;
+
+interface TableItem {
+    id: number | string;
+    [key: string]: any;
+}
 
 function filterData<T>(data: Array<T>, filters: Filters) {
     return data.filter((row) =>
@@ -101,9 +106,7 @@ function sortData<T>(
         return dataClone;
     }
 
-    return dataClone.sort((a, b) =>
-        comparator(a, b, direction),
-    );
+    return dataClone.sort((a, b) => comparator(a, b, direction));
 }
 
 function paginateData<T>(
@@ -135,7 +138,7 @@ function isFilterActive(field: string, filters: Filters){
     return false;
 }
 
-function CustomizableTable<T>({ data, columns }: Readonly<{
+function CustomizableTable<T extends TableItem>({ data, columns }: Readonly<{
   data: Array<T>;
   columns: Columns<T>;
 }>) {
